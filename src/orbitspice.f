@@ -34,7 +34,7 @@ C
       character*1 utc1
 C
       doubleprecision lt, v1(3), v2(3), degpr, cl
-      doubleprecision dpr, clight, vnorm
+      doubleprecision dpr, clight, zz_vnorm
       character*80 utc
 C
 C local vectors for use with orbital Elements in ospice_elts4() entry
@@ -198,7 +198,7 @@ C
       endif
 C
       call vsub( earthve, scve, earthv)
-      lt = vnorm(earthv) / cl
+      lt = zz_vnorm(earthv) / cl
       etlt = et - lt
 C
       if ( earthEph .eq. ORB_USESPK) then
