@@ -10,8 +10,8 @@ FC=$(LFC)
 LXMLIB=
 
 XLIBS=$(LXMLIB) -L/usr/X11R6/lib -lXmu -lXm -lXt -lX11
-#FLIBS=NEARTOP/naif/lib/spicelib.a -lg2c -lm
-FLIBS=NEARTOP/naif/lib/spicelib.a -lgfortran -lm
+#FLIBS=NEARTOP/naif/lib/spicelib.a -lgfortran -lm
+FLIBS=NEARTOP/naif/lib/cspice.a -lgfortran -lm
 
 LIBS=$(XLIBS) $(FLIBS)
 
@@ -21,11 +21,12 @@ DBINC=
 CDEBUG=-O
 CTOFORT=-DCTOFORT_
 
-#XMINCDIR=/usr/lesstif/include/Xm -I/usr/lesstif/include
 XMINCDIR=/usr/X11R6/include/Xm -I/usr/X11R6/include/X11 -I/usr/X11R6/include
 
-CGENERAL=$(CDEBUG) $(CTOFORT) -I/usr/include/X11 -I$(XMINCDIR)
+CGENERALNOX=$(CDEBUG) $(CTOFORT) -INEARTOP/naif/include
+CGENERAL=$(CGENERALNOX) -I/usr/include/X11 -I$(XMINCDIR)
 
+CFLAGSNOX=$(CGENERALNOX) $(DBINC)
 CFLAGS=$(CGENERAL) $(DBINC)
 
 FDEBUG=

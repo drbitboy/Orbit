@@ -115,7 +115,7 @@ char str[255];
   }
   *nlat = ilat;
   *str = '\0';
-  fscanf( f, "%s", str);
+  scanstat = fscanf( f, "%s", str);
   fclose( f);
   if ( !strcmp( str, "eastlon") || !strcmp( str, "EASTLON") ) return(1);
   else return(0);

@@ -24,8 +24,10 @@ CTOFORT=-DCTOFORT_g77
 #XMINCDIR=/usr/lesstif/include/Xm -I/usr/lesstif/include
 XMINCDIR=/usr/X11R6/include/Xm -I/usr/X11R6/include/X11 -I/usr/X11R6/include
 
-CGENERAL=$(CDEBUG) $(CTOFORT) -I/usr/include/X11 -I$(XMINCDIR)
+CGENERALNOX=$(CDEBUG) $(CTOFORT)
+CGENERAL=$(CGENERALNOX) -I/usr/include/X11 -I$(XMINCDIR)
 
+CFLAGSNOX=$(CGENERALNOX) $(DBINC)
 CFLAGS=$(CGENERAL) $(DBINC)
 
 FDEBUG=

@@ -36,6 +36,8 @@ unsigned long i, nv3;
 int iargc;
 double northMin, southMin;
 double *zNorth, *zSouth;
+void spudprint_stl(SPUDF*,double);
+
 
   if ( fnShape ) if ( !strcmp( fnShape, "-h")) ERREX(0)
 

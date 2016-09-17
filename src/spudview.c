@@ -2,12 +2,11 @@
 #include <string.h>
 #include <math.h>
 #include <malloc.h>
-#include "orbit3d.h"
 #include "spudshap.h"
+#include "SpiceUsr.h"
 
 #ifdef vms
 char *malloc();
-int indexx();
 #endif
 
 #ifdef DEBUG
@@ -60,6 +59,7 @@ double bigval;
 double xtmp, ytmp, dx, dy;
 double xtmp1, ytmp1;
 unsigned long numvert = spudf->nv;
+int indexx();
 
   if ( sort4hgpc) {
     sort4hgpc = 1; /* 0 becomes 0; !0 becomes 1 */
@@ -211,7 +211,7 @@ double *sv1StatPtsPtr;
     /* get plate normal in camera coordinates */
     VMINUS2( v[1], v[0], v01);
     VMINUS2( v[2], v[0], v02);
-    vcross( v01, v02, pltNorm);
+    vcrss_c( v01, v02, pltNorm);
     /* ensure plate normal points toward s/c => away from sc-to-plate vec */
     if ( VDOT( scToXyz[0], pltNorm) > 0.0) { VNEG( pltNorm); } 
 
@@ -219,7 +219,7 @@ double *sv1StatPtsPtr;
      * camera/v[N]/v[N+1] the gridpt v[N+2] is
      */
     for ( i=0; i<3; ++i) {
-      vcross( scToXyz[i], scToXyz[(i+1)%3], pltCrossProds[i]);
+      vcrss_c( scToXyz[i], scToXyz[(i+1)%3], pltCrossProds[i]);
       dotProds[i] = VDOT( scToXyz[(i+2)%3], pltCrossProds[i]);
     }
 
@@ -286,7 +286,7 @@ double *sv1StatPtsPtr;
         iHiIdx = i; iLoIdx = iPlus1;
         vhi = scToXyz[i]; vlo = scToXyz[iPlus1];
       }
-      vcross( vlo, vhi, axis);
+      vcrss_c( vlo, vhi, axis);
 
                                            /* if vlo-to-vhi great circle path */
       x = VLEN(axis);                          /* (perpendicular to axis) ... */
@@ -295,7 +295,7 @@ double *sv1StatPtsPtr;
         VSCAL( x, axis); /* length is sin(alt) of max extent of great circle) */
       }
       if ( loz > -1.0) {        
-        vcross( axis, vlo, tangent);      /* ... goes below vlo, tangent will */
+        vcrss_c( axis, vlo, tangent);     /* ... goes below vlo, tangent will */
         if ( tangent[2] < 0.0) {                  /* aim down i.e. have Z < 0 */
           x = - sqrt( 1.0 - (axis[2]*axis[2]));
         } else {
@@ -306,7 +306,7 @@ double *sv1StatPtsPtr;
       /* repeat similar action for hiz */
       if ( hiz < 1.0) {
         VNEG( axis);                            /* (vhi X vlo) = -(vlo X vhi) */
-        vcross( axis, vhi, tangent);
+        vcrss_c( axis, vhi, tangent);
         if ( tangent[2] > 0.0) {
           x = sqrt( 1.0 - (axis[2]*axis[2]));
         } else {

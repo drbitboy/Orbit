@@ -12,12 +12,9 @@
 char *malloc();
 int exit();
 #endif
-/* #include <X11/Intrinsic.h> */
-/* #include <Xm/Xm.h> */
 
-#include "orbit_spice_names.h"
-#include "orbit3d.h"
 #include "spudshap.h"
+#include "SpiceUsr.h"
 
 #define lnv spudf->nv
 #define lnface spudf->nface
@@ -315,7 +312,7 @@ char *debug;
   VEC v, vcp;
   double lVcp;
     VMINUS2( spudf->Rxyz + (3 * (*vrtPtr)), vtx0, v);     /* maxIv to *vrtPtr */
-    vcross( vtx0, v, vcp);               /* cross product of radius & segment */
+    vcrss_c( vtx0, v, vcp);              /* cross product of radius & segment */
     lVcp = VLEN( vcp);                             /* length of cross product */
     if ( lVcp < minCP || vrtPtr == lclVrts) { /* smaller => more perpendicular*/
       iv = *vrtPtr;
@@ -1089,7 +1086,7 @@ VEC vg, v2g;
     vtx2 = spudf->Rxyz + (3 * spudf->oe[spudf->faceoeidx[ip]+1]);
     VMINUS2( vtx1, vtx0, seg10);          /* vector from vertex 0 to vertex 1 */
     VMINUS2( vtx2, vtx0, seg20);          /* vector from vertex 0 to vertex 2 */
-    vcross( seg10,seg20,uvn);  /* cross product of segments is normal to face */
+    vcrss_c( seg10,seg20,uvn); /* cross product of segments is normal to face */
     vl = 1.0 / VLEN(uvn);                             /* normalization factor */
     /* ensure normal faces outward
      * - dot prod of normal w/radial vector to any vertex should be > 0
@@ -1126,7 +1123,7 @@ VEC vg, v2g;
 
     /* initially put midpoint at middle of longest side */
 
-    vmxpb( 0.5, seg01, vtx1, mp);
+    vlcom_c( 0.5, seg01, 1.0, vtx1, mp);
     *r2 = c2 / 4;
 
     /* adjust midpt if angle opp longest side is acute (not right or obtuse) */
@@ -1138,9 +1135,9 @@ VEC vg, v2g;
       g = (c / 2) - cb;            /* dist from V01 midpt to V2-proj-onto-V01 */
       eod = (d2+(g*g)-(c2/4)) / (2*d2); /* dist from V01 midpt to facet midpt */
                                                         /* as a fraction of d */
-      vmxpb( cb/c, seg01, vtx1, vg);        /* vg = projection of V2 onto V01 */
+      vlcom_c( cb/c, seg01, 1.0, vtx1, vg); /* vg = projection of V2 onto V01 */
       VMINUS2( vtx2, vg, v2g);           /* v2g = vector from vg on V01 to V2 */
-      vmxpb( eod, v2g, mp, mp);                               /* adjust midpt */
+      vlcom_c( eod, v2g, 1.0, mp, mp);                        /* adjust midpt */
       *r2 += (eod*eod*d2);                                   /* adjust radius */
     }
   } /* for ip ... */
@@ -1209,10 +1206,10 @@ long *foidx;
       if ( a2 > *r2) break;     /* boresight must pass within radius of midpt */
       if ( (k=VDOT(mpmsc,uvn)/bsdn) < 0.0) break;
       if ( k >= ksofar) break;  /* must intersect before current intersection */
-      vmxpb( k, ubs, sc, scpkbs);    /* intersection, k * boresight + sc, ABF */
+      vlcom_c( k, ubs, 1.0, sc, scpkbs);  /* intersection, k * bore + sc, ABF */
 #     else
       k=VDOT(mpmsc,uvn)/bsdn;                    /* k = range to intersection */
-      vmxpb( k, ubs, sc, scpkbs);    /* intersection, k * boresight + sc, ABF */
+      vlcom_c( k, ubs, 1.0, sc, scpkbs);  /* intersection, k * bore + sc, ABF */
       VMINUS2( mp, scpkbs, mpmi);                 /* intersection to midpoint */
       if ( VDOT(mpmi,mpmi) > *r2) break;   /* ... range must pass close to mp */
       if ( k < 0.0) break;       /* ... must intersect in front of instrument */
@@ -1225,10 +1222,10 @@ long *foidx;
       VMINUS2( vtx0, scpkbs, v0);    /* vectors from intersection to vertices */
       VMINUS2( vtx1, scpkbs, v1);
       VMINUS2( vtx2, scpkbs, v2);
-      vcross( v0, v1, v0xv1);       /* cross products of sequence of vertices */
-      vcross( v1, v2, v1xv2);
+      vcrss_c( v0, v1, v0xv1);      /* cross products of sequence of vertices */
+      vcrss_c( v1, v2, v1xv2);
       if ( (dot012=VDOT(v0xv1,v1xv2)) < 0.0) break; /* cp dot cp should be >0 */
-      vcross( v2, v0, v2xv0);                       /* if intersection is     */
+      vcrss_c( v2, v0, v2xv0);                      /* if intersection is     */
       if ( (dot120=VDOT(v1xv2,v2xv0)) < 0.0) break; /* inside triangle        */
       if ( (dot201=VDOT(v2xv0,v0xv1)) < 0.0) break;
       if ( dot012==0.0 || dot120==0.0) {  /* final checks for 0-length cross- */

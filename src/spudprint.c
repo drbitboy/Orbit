@@ -1,17 +1,14 @@
 #include <stdio.h>
-#include <stdlib.h> /* for getenv */
+#include <stdlib.h> /* for getenv and malloc */
 #include <string.h>
 #include <math.h>
 #ifdef vms
 char *malloc();
-#else
-#include <malloc.h>
 #endif
 
-#include "orbit_spice_names.h"
-#include "orbit3d.h"
 #include "spudshap.h"
 #include "debug.h"
+#include "SpiceUsr.h"
 
 void spudprint_xplate( SPUDF *spudf) {
 unsigned long	iv, ip, ipn, i0, i1, i2;
@@ -46,7 +43,7 @@ VEC v01, v02, crossp;
     v2 = ICOPTR(spudf->oe[spudf->faceoeidx[ip] + 1]);
     VMINUS2( v1, v0, v01);
     VMINUS2( v2, v0, v02);
-    vcross( v01, v02, crossp);
+    vcrss_c( v01, v02, crossp);
     if ( VDOT(v0,crossp) < 0.0) order[ip] = 1;
 
     /* find adjacent plates */
@@ -109,11 +106,9 @@ VEC v01, v02, crossp;
     i1 = spudf->oe[spudf->faceoeidx[ip]];
     i2 = spudf->oe[spudf->faceoeidx[ip] + 1];
     if ( !order[ip])                         /* verts, corrected for order    */
-      printf("    3%6d%6d%6d",i0,i1,i2);
-    else
-      printf("    3%6d%6d%6d",i0,i2,i1);
+      printf("    3%6lu%6lu%6lu",i0,i2,i1);
     adjip = adj + ip3;
-    printf( "%6d%6d%6d", adjip[0], adjip[1], adjip[2]);    /* adjacent plates */
+    printf( "%6lu%6lu%6lu", adjip[0], adjip[1], adjip[2]);    /* adjacent plates */
     printf( "%13.7lf%13.7lf%13.7lf"          /* plate normal (ignored by o3d) */
           , spudf->uvnorms[ip3], spudf->uvnorms[ip3+1], spudf->uvnorms[ip3+2]);
     printf( "%13.7lf", 1.0);                   /* plate area (ignored by o3d) */
@@ -152,7 +147,7 @@ double flipNorm = (shellthick < 0.0) ? -1.0 : 1.0;
      */
     for ( iv=0, pn=shellNorms; iv<spudf->nv; ++iv, pn += 3) {
       scalePn = - shellthick / VLEN(pn);
-      vmxpb( scalePn, pn, spudf->Rxyz+(3*iv), pn);
+      vlcom_c( scalePn, pn, 1.0, spudf->Rxyz+(3*iv), pn);
     }
   }
 
@@ -190,7 +185,7 @@ endsolid
 
     
     if ( innerShell) {
-    VEC v01, v02, vcross, vn;
+    VEC v01, v02, vn;
       /* get inner shell vertices */
       v[0] = innerShell + (3*spudf->faceapices[ip]);
       v[1] = innerShell + (3*spudf->oe[spudf->faceoeidx[ip]]);
@@ -198,7 +193,7 @@ endsolid
       /* get 2 plate sides, cross them to get unit normal */
       VMINUS2( v[1], v[0], v01);
       VMINUS2( v[2], v[0], v02);
-      ucrss( v01, v02, vn);
+      ucrss_c( v01, v02, vn);
       /* flip normal to ensure normal points in */
       if ( VDOT(vn,v[1]) > 0.0) { VNEG( vn); }
       VSCAL( flipNorm, vn);
@@ -221,7 +216,7 @@ void spudprint_oogl( SPUDF *spudf) {
 unsigned long i;
 double *Rxyz = spudf->Rxyz;
 
-  printf( "\nOFF\n%d %d %d\n", spudf->nv, spudf->nface, spudf->nseg);
+  printf( "\nOFF\n%lu %lu %lu\n", spudf->nv, spudf->nface, spudf->nseg);
 
   for ( i=0; i<(spudf->nv*3); i+=3) {
     printf( "    %f", *(Rxyz++));
@@ -229,7 +224,7 @@ double *Rxyz = spudf->Rxyz;
     printf( " %f\n", *(Rxyz++));
   }
   
-  for ( i=0; i<spudf->nface; i++) printf( "    3 %d %d %d\n",
+  for ( i=0; i<spudf->nface; i++) printf( "    3 %lu %lu %lu\n",
       spudf->faceapices[i], spudf->oe[spudf->faceoeidx[i]], 
       spudf->oe[1+spudf->faceoeidx[i]]);
   return;
@@ -243,8 +238,8 @@ long *plateNum2Ip = (long *) malloc( sizeof(long) * spudf->nface);
 
 int oldStyle = getenv( "OLD_STYLE_SPUDPRINT") ? 1 : 0;
 
-  if ( oldStyle) fprintf( f, "%7d\n", spudf->nv);
-  else fprintf( f, "%7d %7d\n", spudf->nv, spudf->nface);
+  if ( oldStyle) fprintf( f, "%7lu\n", spudf->nv);
+  else fprintf( f, "%7lu %7lu\n", spudf->nv, spudf->nface);
 
   /* print out vertices */
 
@@ -263,7 +258,7 @@ int oldStyle = getenv( "OLD_STYLE_SPUDPRINT") ? 1 : 0;
   plateNum2Ip--;  /* ->platenum is one-based */
   for ( ip=0; ip<spudf->nface; ++ip) plateNum2Ip[spudf->platenum[ip]] = ip;
 
-  if ( oldStyle) fprintf( f, "%7d\n", spudf->nface);
+  if ( oldStyle) fprintf( f, "%7lu\n", spudf->nface);
 
   /* print out faces IN PLATENUM ORDER */
 
@@ -292,8 +287,8 @@ int iv, ip, i0, i1, i2;
 int oldStyle = getenv( "OLD_STYLE_SPUDPRINT") ? 1 : 0;
 
   /* print out vertices */
-  if ( oldStyle) printf( "%7d   ! Number of vertices\n", spudf->nv);
-  else printf( "%7d %7d\n", spudf->nv, spudf->nface);
+  if ( oldStyle) printf( "%7lu   ! Number of vertices\n", spudf->nv);
+  else printf( "%7lu %7lu\n", spudf->nv, spudf->nface);
 
   if ( oldStyle) {
     for ( iv=0; iv<spudf->nv; iv++) 
@@ -307,14 +302,14 @@ int oldStyle = getenv( "OLD_STYLE_SPUDPRINT") ? 1 : 0;
 
   /* print out faces */
 
-  if ( oldStyle) printf( "%7d   ! Number of faces\n", spudf->nface);
+  if ( oldStyle) printf( "%7lu   ! Number of faces\n", spudf->nface);
 
   for ( ip=0; ip<spudf->nface; ip++) {
     i0 = spudf->faceapices[ip] + 1;
     i1 = spudf->oe[spudf->faceoeidx[ip]] + 1;
     i2 = spudf->oe[spudf->faceoeidx[ip] + 1] + 1;
     if ( oldStyle) 
-      printf( "%7d%7d%7d%7d%20.12e\n", spudf->platenum[ip], i0, i1, i2
+      printf( "%7lu%7d%7d%7d%20.12e\n", spudf->platenum[ip], i0, i1, i2
             , spudf->platecolor ? spudf->platecolor[ip] : 1.0);
     else
       printf( "%7d%7d%7d%20.12e\n", i0-1, i1-1, i2-1

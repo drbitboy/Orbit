@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #define MIN(A,B) ((A)<(B)?(A):(B))
 int main( int argc, char **argv) {

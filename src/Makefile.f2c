@@ -10,7 +10,8 @@ CDEBUG = -DDEBUG
 
 XLIBS = -L/usr/lib/X11R4 -L/usr/lib/Motif1.1 -lXm -lXt -lX11
 
-CGENERAL = $(CDEBUG) $(CTOFORT) -I/usr/include/X11R4 -I/usr/include/Motif1.1
+CGENERALNOX = $(CDEBUG) $(CTOFORT)
+CGENERAL = $(CGENERALNOX) -I/usr/include/X11R4 -I/usr/include/Motif1.1
 
 HPCFLAGS = -Aa -Wp,-H12000 $(CTOFORT)
 
@@ -19,6 +20,7 @@ FLIBS =  $(SPICELIBS) -L/usr/local/lib -lF77 -lI77 -lm
 
 LIBS = $(XLIBS) $(FLIBS) -lPW
 CFLAGS = $(HPCFLAGS) $(CGENERAL)
+CFLAGSNOX = $(HPCFLAGS) $(CGENERALNOX)
 
 OPT=
 

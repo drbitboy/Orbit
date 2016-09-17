@@ -52,7 +52,6 @@ V(NPLATE-1)0 V(NPLATE-1)1 V(NPLATE-1)2
 #include <stdio.h>
 #include <string.h>
 
-#include "orbit3d.h"
 #include "spudshap.h"
 
 #define ENVNAME "PLATES"
@@ -224,6 +223,7 @@ long orphans = 0;
 long *segpervert;
 double tmpmax2;
 VEC tmpvec;
+char* pFgets;
 
   if ( outFN) *outFN = (char *) 0;
 
@@ -397,12 +397,12 @@ VEC tmpvec;
   /*********************/
   switch ( scanstat0 ) {
   case 2:
-      fgets( str, 255, f);          /* scanstat0==2:  skip first line (NV NP) */
+      pFgets = fgets( str, 255, f); /* scanstat0==2:  skip first line (NV NP) */
                                       /* ***N.B. DROP THROUGH TO scanstat0==3 */
   /*********************/
   case 3:                                                  /* read 'vx vy vz' */
     for ( iv=0; iv<spudf->nv; ++iv) {
-      fgets( str, 255, f);
+      pFgets = fgets( str, 255, f);
       scanstat = sscanf( str, "%lf %lf %lf", fptr, fptr+1, fptr+2);
       if ( scanstat != 3) RTN( "Problem reading plate vertices' xyz")
       fptr += 3;
@@ -411,9 +411,9 @@ VEC tmpvec;
     break;
   /*********************/
   case 1:                                  /* read NV line, then 'iv vx vy vz */
-    fgets( str, 255, f);
+    pFgets = fgets( str, 255, f);
     for ( iv=0; iv<spudf->nv; ++iv) {
-      fgets( str, 255, f);
+      pFgets = fgets( str, 255, f);
       scanstat = sscanf( str, "%ld %lf %lf %lf", lng, fptr, fptr+1, fptr+2);
       if ( scanstat != 4) RTN( "Problem reading plate vertices' iv x y z")
       fptr += 3;
@@ -438,7 +438,7 @@ VEC tmpvec;
     for ( iplate=0, lptr=verts, colorptr=platecolor;
           iplate<spudf->nface; ++iplate, ++colorptr) {
     unsigned long tmplng;
-      fgets( str, 255, f);
+      pFgets = fgets( str, 255, f);
       scanstat = sscanf( str, "%ld %ld %ld %lf", lptr,lptr+1,lptr+2, colorptr);
       if ( scanstat < 3) RTN( "Problem reading plate vertices v1 v2 v3 [color]")
 
@@ -494,11 +494,11 @@ VEC tmpvec;
     }
 
   } else {       /* scanstat1 = 1, read in NPLATE, then plates' "iv v1 v2 v3" */
-    fgets( str, 255, f);
+    pFgets = fgets( str, 255, f);
     for ( iplate=0, lptr=verts, colorptr=platecolor; 
           iplate<spudf->nface; ++iplate, ++colorptr) {
     unsigned long tmplng;
-      fgets( str, 255, f);
+      pFgets = fgets( str, 255, f);
       scanstat = sscanf( str, "%ld %ld %ld %ld %lf"
                        , lptr+3, lptr, lptr+1, lptr+2, colorptr);
       if ( scanstat < 4) 
