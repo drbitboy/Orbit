@@ -12,6 +12,7 @@ Near-Earth Asteroid Rendezvous (NEAR) spacecraft sequence planning tool
 
 * Point the naif symlink to someplace where the SPICE FORTRAN toolkit resides
   * e.g. rm -f naif ; ln -s ~/toolkit naif
+  * The point is that NEARTOP/naif/lib/spicelib.a should be the SPICE FORTRAN toolkit library
 
 
 ## Build SPUD2STL (in src/):
