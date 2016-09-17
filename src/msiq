@@ -1,0 +1,329 @@
+#!/bin/csh
+
+unset echo
+
+alias fixws "tr '[\011]' ' ' | sed -e 's/  */ /g' | awk '{print "'$'"2}'"
+set one="$1"
+set two="$2"
+set three="$3"
+set four="$4"
+set five="$5"
+
+set noamopt="-noam"
+set noam="$noamopt"
+
+if ( "$one" == "$noamopt" ) then
+  set one="$two"
+  set two="$three"
+  set three="$four"
+  set four="$five"
+  set five=""
+else if ( "$two" == "$noamopt" ) then
+  set two="$three"
+  set three="$four"
+  set four="$five"
+  set five=""
+else if ( "$three" == "$noamopt" ) then
+  set three="$four"
+  set four="$five"
+  set five=""
+else if ( "$four" == "$noamopt" ) then
+  set four="$five"
+  set five=""
+else if ( "$five" == "$noamopt" ) then
+  set five=""
+else
+  set noam=""
+endif
+
+set pfx="$one"
+
+set bn=`basename $0`
+set fixupmsi=`echo $0 | sed -e "s/$bn/fixupmsi/"`
+set msiq_exe=`echo $0 | sed -e "s/$bn/msiq_exe/"`
+set kmetquat2ck=`echo $0 | sed -e "s/$bn/kmetquat2ck/"`
+set toxfr=`echo $0 | sed -e "s/$bn/toxfr/"`
+
+foreach i ( $fixupmsi $msiq_exe $kmetquat2ck )
+  if ( ! -x $i ) then
+    echo "Cannot execute $i"
+    set one=help
+  endif
+end
+
+if ( "$one" == "help" ) then
+  cat $0.hlp
+  set pfx=""
+endif
+
+if ( "$one" == "" ) then
+
+  alias san 'set ans="n"'
+  alias sayes 'set ans="y"'
+  alias ask 'set ans="$<y"'
+  san
+  while ( "`echo $ans | sed 's/^[Nn].*//'`" == "") 
+    sayes
+    echo "Enter prefix for files (e.g. Harch/ops_final/98320/98320):  "
+    set pfx="$<"
+    echo " "
+
+    # find input files to use
+
+    set infils=""
+    foreach i ( .msi .nis .nis_mir )
+      if ( -r "$pfx$i") set infils="$infils$pfx$i "
+    end
+    if ( "$infils" == "" ) then
+      echo "No input files:  $pfx.msi $pfx.nis or $pfx.nis_mir"
+      san
+    endif
+
+    # test if user can write to working directory
+
+    set workdir=`dirname "$pfx"`
+    if ( ! -w "$workdir" ) then
+      echo "Cannot write to directory $workdir"
+      san
+    else
+      foreach i ( .msi.met .nis.met .kmetquat )
+        set wfil="$pfx$i"
+        if ( -f "$wfil") then
+          if ( ! -w "$wfil" ) then
+            echo "Cannot write to file $wfil"
+            san
+          endif
+        endif
+      end
+    endif
+
+    if ( "`echo $ans | sed 's/^[Nn].*//'`" != "") then
+      echo "Files to use:"
+      foreach i ( $infils )
+        echo "  $i"
+      end
+      echo "Files to write:"
+      foreach i (  $pfx{.msi.met,.nis.met,.quat} )
+        echo "  $i"
+      end
+      echo " "
+      echo "Is this ok ([y]/n)?"
+      ask
+      echo " "
+    endif
+  end
+
+  # make .nis.noam file
+
+  san
+  while ( "`echo $ans | sed 's/^[Nn].*//'`" == "") 
+    if ( "$noam" == "" ) then
+      echo "Do you want to write a NIS Noam file $pfx.nis.noam (y/[n])?"
+    else
+      echo "Do you want to write a NIS Noam file $pfx.nis.noam ([y]/n)?"
+    endif
+    set ans="$<${noam}n"
+    echo " "
+    if ( "`echo $ans | sed 's/^[Nn].*//'`" != "") then
+      set noam="$noamopt"
+      if ( -f "$pfx.nis.noam" ) then
+        if ( ! -w "$pfx.nis.noam" ) then
+          echo "Cannot write to file $pfx.nis.noam"
+          set noam=""
+        endif
+      endif
+    else
+      set noam=""
+    endif
+
+    echo -n "NIS Noam file $pfx .nis.noam will "
+    if ( "$noam" == "") echo -n "not "
+    echo "be written"
+    echo " "
+    echo "Is this ok ([y]/n)?"
+    ask
+    echo " "
+
+  end
+
+  # make C Kernel?
+
+  san
+  while ( "`echo $ans | sed 's/^[Nn].*//'`" == "") 
+    set two=""
+    set three=""
+    set four=""
+    echo "Do you want to write a C kernel $pfx.bc ([y]/n)?"
+    ask
+    echo " "
+    if ( "`echo $ans | sed 's/^[Nn].*//'`" != "") then
+      set two=makeck
+      if ( -f "$pfx.bc" ) then
+        if ( ! -w "$pfx.bc" ) then
+          echo "Cannot write to file $pfx.bc"
+          set two=""
+        endif
+      endif
+
+      if ( "$two" != "" ) then
+        echo "Do you want to make the transfer format C Kernel $pfx.xc ([y]/n)?"
+        ask
+        if ( "`echo $ans | sed 's/^[Nn].*//'`" != "") then
+          set two=makeckplus
+        endif
+
+        echo "Specify SCLK & LEAPSECOND files from a SPICESPEC ([y]/n)?"
+        ask
+        echo " "
+        if ( "`echo $ans | sed 's/^[Nn].*//'`" != "") then
+          set three="spicespec"
+          echo "Enter SPICESPEC filename OR"
+          echo " hit Enter to use default SPICESPEC (./spicespec or setenv SPICESPEC ...):"
+          set ans="$<"
+          echo " "
+          if ( "$ans" != "" ) then
+            set four="$ans"
+          else
+            set four="`printenv SPICESPEC`"
+            if ( "$four" == "" ) set four="spicespec"
+          endif
+          set ss="$four"
+          if ( ! -r "$four" ) then
+            echo "Cannot read SPICESPEC file ($ss)"
+            set two=""
+          else
+            set sclk="`grep '^[TP]C*K:.*sclk' $ss | fixws`"
+            set leap="`grep '^[PLT].*[KC]:.*leap' $ss | fixws`"
+            foreach i ( "$sclk" "$leap" )
+              if ( ! -r "$i" ) then
+                echo "Cannot read file $i"
+                set two=""
+              endif
+            end
+          endif
+        else
+          echo "Enter SCLK filename"
+          set three="$<"
+          echo "Enter LEAPSECOND filename"
+          set four="$<"
+          echo " "
+          foreach i ( "$three" "$four" )
+            if ( ! -r "$i" ) then
+              echo "Cannot read file $i"
+              set two=""
+            endif
+          end
+        endif
+      endif
+    endif
+
+    echo -n "C kernel will "
+    if ( "$two" == "") echo -n "not "
+    echo "be written"
+    echo " "
+    echo "Is this ok ([y]/n)?"
+    ask
+    echo " "
+  end
+
+endif
+
+if ( "$pfx" != "" ) then
+
+set framesfile=$pfx.framesfile.list
+set deleteff="no"
+if ( -r $framesfile) then
+  set margs=( -f $framesfile $pfx )
+else
+  set workdir=`dirname "$pfx"`
+  set workfile=$workdir/ff.list.$$
+  set ff=( `\ls $workdir/ | grep '\.f$'` )
+  if ( "$ff" != "" ) then
+    foreach i ( $workdir/*.f )
+      touch $workfile
+      echo -n $i:t '#' >> $workfile
+      grep ":alt et" $i | head -1 | sed -e "s,^$workdir/,," >> $workfile
+    end
+    if ( -r $workfile) then
+      sort -n -t '#' +1 < $workfile > $framesfile
+      \rm -f $workfile
+    endif
+  endif
+  if ( -r $framesfile ) then
+    set margs=( -f $framesfile $pfx )
+    set deleteff="yes"
+  else
+    set margs=$pfx
+  endif
+endif
+
+set margs=( $margs $noam )
+
+( if ( -r $pfx.msi ) grep ' MSI  *[MAQ][auc][ntaq][uot]' $pfx.msi | $fixupmsi ; \
+  if ( -r $pfx.nis ) grep NI_SHUTR_IN_OUT $pfx.nis ; \
+  if ( -r $pfx.nis_mir ) grep -v 'Seq:  *0,' $pfx.nis_mir ) | \
+  \
+  sed -e 's/[()]//g' -e 's/	/ /g' -e 's/^  *//' -e 's/ * $//' \
+      -e 's/,  */,/g' -e 's/  */ /g' -e 's/ /,/g' \
+      -e s/Acquisition/Zcquisition/| \
+  sort -n -t , +4 | \
+  $msiq_exe $margs
+
+  # cat > x.x
+  # echo "$msiq_exe $margs < x.x"
+  # $msiq_exe $margs < x.x
+
+  if ( "$deleteff" == "yes" ) then
+    \rm -f $framesfile
+  endif
+
+  if ( -r $pfx.kmetquat ) then
+    if ( "$two" != "" ) then
+      set sclk=""
+      set leap=""
+
+      # look for sclk & leapseconds filename in spicespec
+
+      if ( "$three" == "spicespec" ) then
+        if ( "$four" != "" ) then
+          set ss=$four
+        else
+          set sse="`printenv SPICESPEC`"
+          if ( "$sse" != "" ) then
+            set ss="$SPICESPEC"
+          else
+            set ss="spicespec"
+          endif
+        endif
+        if ( -r $ss ) then
+
+          # TK: or PCK: ... *sclk*
+          # TK: or PCK: or LEAPSEC: ... *leap*
+
+          set sclk="`grep '^[TP]C*K:.*sclk' $ss | fixws`"
+          set leap="`grep '^[PLT].*[KC]:.*leap' $ss | fixws`"
+        else
+          echo "SPICESPEC file $ss not found"
+        endif
+
+      # $3 & $4 are sclk & leapseconds files
+
+      else
+        set sclk="$three"
+        set leap="$four"
+      endif
+
+      if ( -r "$sclk" && -f "$leap" ) then
+        #$kmetquat2ck $pfx.bc -93 -93000 "$sclk" "$leap" -i "$pfx.kmetquat"
+        $kmetquat2ck $pfx.bc -93 -93000 "$sclk" "$leap" -i "$pfx.kmetquat" -flip
+        if ( "$two" == "makeckplus" ) then
+          if ( -f $pfx.xc ) rm -f $pfx.xc
+          $toxfr $pfx.bc
+        endif
+      else
+        echo "SCLK ($sclk) and/or LEAPSECOND ($leap) file(s) not found"
+      endif
+    endif
+  endif
+
+endif

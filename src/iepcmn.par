@@ -1,0 +1,47 @@
+C     iepcmn.par
+C
+      integer IEP_l
+      integer IEP_s
+      integer IEP_lin
+      integer IEP_smp
+      integer IEP_cla
+      integer IEP_clo
+      integer IEP_ola
+      integer IEP_olo
+      integer IEP_rng
+      integer IEP_nor
+      integer IEP_rpp
+      integer IEP_inc
+      integer IEP_emi
+      integer IEP_pha
+      integer IEP_et
+      integer IEP_met
+      integer IEPDBLCOUNT
+C
+      integer IEP_pic
+      integer IEP_cam
+      integer IEPINTCOUNT
+C
+      parameter (IEP_l=1)
+      parameter (IEP_s=IEP_L+1)
+      parameter (IEP_lin=IEP_s+1)
+      parameter (IEP_smp=IEP_lin+1)
+      parameter (IEP_cla=IEP_smp+1)
+      parameter (IEP_clo=IEP_cla+1)
+      parameter (IEP_ola=IEP_clo+1)
+      parameter (IEP_olo=IEP_ola+1)
+      parameter (IEP_rng=IEP_olo+1)
+      parameter (IEP_nor=IEP_rng+1)
+      parameter (IEP_rpp=IEP_nor+1)
+      parameter (IEP_inc=IEP_rpp+1)
+      parameter (IEP_emi=IEP_inc+1)
+      parameter (IEP_pha=IEP_emi+1)
+      parameter (IEP_et=IEP_pha+1)
+      parameter (IEP_met=IEP_et+1)
+      parameter (IEPDBLCOUNT=IEP_met)
+C
+      parameter (IEP_pic=1)
+      parameter (IEP_cam=IEP_pic+1)
+      parameter (IEPINTCOUNT=IEP_cam)
+C
+C     end iepcmn.par

@@ -1,0 +1,54 @@
+#!/bin/tcsh
+
+unset echo
+
+switch ( "`hostname`" )
+case spinner:
+  set sfx=_i386
+  breaksw
+case baritone:
+  set sfx=
+  breaksw
+default:
+  echo "UNKNOWN HOST, EXITING ..."
+  exit
+  breaksw
+endsw
+
+set tout=$$.ecout
+\rm -f $tout
+
+set tls=/near2/SpiceOps/ops/current/near.tls
+
+set lst=( $* )
+
+if ( "$lst" == "" ) then
+  set lst=( /near2/SpiceOps/ops/spk/near_*_*_merged_v*.bsp )
+endif
+
+foreach bsp ( $lst )
+
+if ( "$sfx" != "" ) then
+  if ( -f "$bsp$sfx" ) then
+    set bsp="$bsp$sfx"
+  endif
+endif
+
+commnt << EoF > /dev/null
+e
+$bsp
+$tout
+q
+EoF
+
+set l=( `egrep '^START_UTC *= *"|^END_DET_UTC *= *"' $tout | sed -e 's/.*= *"//' -e 's/"//g'`)
+if ( $#l == 2 ) then
+  set ets=( SPKO: $bsp `0brief $bsp | u2e $tls $l` )
+  echo $ets
+else
+  echo "### START_UTC or END_DET_ETC label not found in $bsp"
+endif
+
+\rm -f $tout
+
+end

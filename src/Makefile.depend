@@ -1,0 +1,78 @@
+# DO NOT DELETE
+
+fixOrbdb.o: debug.h orbit_spice_names.h orbit3d.h orbitfort.h orbitgui_framesout.h orbit_stats.h spudshap.h orbdb.h toiep.h
+frm2iep.o: debug.h orbit_spice_names.h orbit3d.h orbitfort.h orbitgui_framesout.h orbit_stats.h spudshap.h orbdb.h toiep.h
+frm2iepgui.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit_util.h local.h debug.h
+kmetquat2ck.o: orbitfort.h orbit_spice_names.h
+matriculator.o: orbit_spice_names.h orbit3d.h orbitfort.h orbitgui_framesout.h
+orbdb2pltmet.o: orbdb.h
+orbdb.o: orbdb.h
+orbdbck.o: orbdb.h
+orbdbDump.o: orbdb.h
+orbdbMrg.o: orbdb.h
+orbit3d.o: orbitfort.h orbit_spice_names.h orbit3d.h orbitgui_framesout.h pointing.h orbit_cas.h orbit_params.h orbit_cas_opnav.h debug.h
+orbit3d_dummy_funcs.o: orbit_spice_names.h
+orbit_cas.o: debug.h orbit_spice_names.h orbit_cas.h orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h orbit_params.h orbit_cas_opnav.h orbit_util.h orbit_cas_rwarg.h
+orbit_cas_opnav.o: debug.h orbit_spice_names.h orbit_cas.h orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h orbit_params.h orbit_cas_opnav.h orbit_util.h
+orbit_cas_sasf2CAS.o: orbit_cas.h orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h orbit_params.h orbit_cas_opnav.h orbit_util.h orbit_cas_rwarg.h
+orbit_cas_sasf.o: orbit_cas.h orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h orbit_params.h orbit_cas_opnav.h orbit_util.h debug.h
+orbitfort.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h orbit_util.h pointing.h orbit_spice_names.h debug.h
+orbit_fov.o: orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h debug.h orbit_spice_names.h
+orbit_frames.o: orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h orbit_cas.h orbit_params.h orbit_cas_opnav.h debug.h
+orbit_gen_msirep.o: orbit3d.h orbitfort.h orbitgui_framesout.h orbit_cas.h pointing.h orbit_params.h orbit_cas_opnav.h orbit_spice_names.h debug.h local.h
+orbit_gen_nisrep.o: orbit3d.h orbitfort.h orbitgui_framesout.h orbit_cas.h pointing.h orbit_params.h orbit_cas_opnav.h orbit_spice_names.h debug.h local.h
+orbit_gentimes.o: orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h debug.h orbit_gentimes.h orbit_spice_names.h
+orbitgui.o: orbitgui_hc.h orbit_spice_names.h orbitgui_fieldmenu.h orbitfort.h orbit_params.h spudshap.h orbit3d.h orbitgui_framesout.h pointing.h rainbow.h local.h debug.h
+orbitgui_cas.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit_cas.h orbit3d.h orbitgui_framesout.h pointing.h orbit_cas_opnav.h orbit_util.h local.h debug.h orbitgui_fileseldialog.h lesstifbug.h
+orbitgui_elts.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h debug.h
+orbitgui_entergentimes.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h pointing.h debug.h orbit_gentimes.h
+orbitgui_enterpoint.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h pointing.h debug.h
+orbitgui_enterxyz.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h debug.h
+orbitgui_fieldmenu.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h debug.h
+orbitgui_fileseldialog_test.o: orbitgui_fileseldialog.h
+orbitgui_fileseldialog_test.o: local.h debug.h lesstifbug.h
+orbitgui_framesout.o: orbitgui_framesout.h orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h debug.h
+orbitgui_gen.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h debug.h
+orbitgui_gen_msi0.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h debug.h
+orbitgui_gen_nis0.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h debug.h
+orbitgui_ps.o: orbitgui_hc.h rainbow.h debug.h local.h
+orbitgui_selnis.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h debug.h
+orbitgui_shading.o: orbitgui_fieldmenu.h orbitfort.h orbit_params.h orbit3d.h orbitgui_framesout.h debug.h
+orbitgui_util.o: local.h debug.h lesstifbug.h
+orbitgui_xfig.o: orbitgui_hc.h debug.h local.h
+orbitlcrv.o: iepcmn_par.h orbitfort.h
+orbit_msi_frames.o: orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h debug.h
+orbit_nis_frames.o: orbit3d.h orbitfort.h orbitgui_framesout.h pointing.h orbit_cas.h orbit_params.h orbit_cas_opnav.h debug.h
+orbitsetter.o: tie_fighter_hot local.h debug.h orbit3d.h orbitfort.h orbitgui_framesout.h
+orbit_stats.o: orbit_stats.h debug.h
+orbit_util.o: debug.h orbit_util.h
+platecompare.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+platelandmarks.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+platetest.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+plt2metHtml.o: orbit_spice_names.h orbdb.h spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h debug.h orbit3d_dummy_funcs.h
+shaptest.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+speedtest2.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+speedtest.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spud2oogl.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spud2plate.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spud2raysh.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spud2stl.o: debug.h spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h orbit_spice_names.h
+spud2topo.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spud2wrl.o: debug.h spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h orbit_spice_names.h
+spud2xplate.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spudellfix2plate.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spudf2.o: debug.h spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h orbit_spice_names.h
+spudface.o: debug.h orbit_spice_names.h orbit3d.h orbitfort.h orbitgui_framesout.h spudshap.h
+spudlims.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spudplates.o: orbit3d.h orbitfort.h orbitgui_framesout.h spudshap.h
+spudprint.o: orbit_spice_names.h orbit3d.h orbitfort.h orbitgui_framesout.h spudshap.h debug.h
+spudshap.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spudshap_raysh.o: debug.h spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spudspeed.o: spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h
+spudtest.o: debug.h orbit3d.h orbitfort.h orbitgui_framesout.h spudshap.h
+spudview2.o: orbit3d.h orbitfort.h orbitgui_framesout.h spudshap.h
+spudview.o: orbit3d.h orbitfort.h orbitgui_framesout.h spudshap.h
+superscan.o: orbitfort.h orbit_spice_names.h debug.h
+testspudf2.o: debug.h spudshap.h orbit3d.h orbitfort.h orbitgui_framesout.h orbit_spice_names.h
+toiep.o: debug.h toiep.h orbit3d.h orbitfort.h orbitgui_framesout.h spudshap.h pointing.h orbit_spice_names.h orbit_stats.h
+u2e.o: debug.h orbitfort.h orbit_spice_names.h

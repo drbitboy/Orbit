@@ -1,0 +1,130 @@
+EXAMPLES OF RUNNING FRM2IEP
+
+- a.f & b.f are frames files i.e. output from "Frames->SaveFrames" menu of orbit
+
+- eros.plt is a plate model file
+
+- eros.spud is a SPUD shape model file
+
+frm2iep has 3 kinds of output:
+
+  A)  IEP file e.g. for input to binner
+
+  B)  statistics file - summary of all possible per-plate map data e.g. 
+      to generate multiple plate models with various types of map data.
+
+  C)  plate model file with a single kind of map data e.g. for use with orbit
+
+********************************************************************************
+A) GENERATE IEP FILES
+
+
+A1) use file a.f to generate an IEP file called a.iep i.e. a file with 
+    incidence, emission & phase angle for each plate visible in each frame.
+    a.iep is suitable for input to binner, use PLATE model file eros.plt.
+
+  % cat a.f | frm2iep -plates eros.plt > a.iep
+OR
+  % frm2iep -plates eros.plt < a.f > a.iep
+
+
+A2) do the same thing using frames files a.f & file b.f to create ab.iep, 
+    use SPUD model file eros.spud
+
+  % cat a.f b.f | frm2iep -spud eros.spud -outiep ab.iep
+
+A3) append IEP data from b.f to all.iep; all.iep will be identical to ab.iep 
+    in (2) above.
+
+  % frm2iep -plates eros.plt < b.f >> all.iep
+
+
+********************************************************************************
+B) GENERATE STATISTICS FILES
+
+
+B1) use frames file a.f to generate statistics file stats.a.f that 
+    comprises some header information plus 1 line for each each plate 
+    in PLATE model file eros.plt.  Each line in stats.a.f has 1 plate's 
+    data for the frame with the minimum emission angle for that plate.  
+
+  % frm2iep -plates eros.plt -outstats stats.a.f -stat mu \
+                  -nooutiep < b.f > /dev/null
+
+    ***N.B. The commanded statistic selection criterion (-min or -max) 
+    whenever -outstats &/or -instats are commanded will be overridden 
+    depending on the chosen controlling statistic (-max for -stat mu, mu0, 
+    mu0mu, cosphase & resolution; -min for -stat incid, emiss, phase, mrmorph 
+    & mralbedo; -stat coverage is meaningless when -outstats &/or -instats 
+    is commanded).
+
+    ***N.B. The -nooutiep option suppresses the IEP output (see (A) above). 
+
+    ***N.B. The default option whenever -outstats &/or -instats are 
+    commanded is to output a plate model to stdout with the selected 
+    statistic as its map data.  The (B) examples send that plate model 
+    and the IEP output to the bit bucket (> /dev/null).  Section (C) 
+    below will deal with generating plate models.
+
+B2) use frames file b.f & statistics file stats.a.f (generated in (B1) 
+    above) to generate a new statistics file stats.ab.f that merges 
+    the summary info in stats.a.f with the corresponding info from b.f.
+
+  % frm2iep -plates eros.plt -instats stats.a.f -outstats stats.ab.f \
+                  -nooutiep < b.f > /dev/null
+
+    ***N.B. The controlling statistic is stored in stats.a.f and so does 
+    not need to be commanded. 
+
+    ***N.B. This will give the same result as running frm2iep once on 
+    the concatenation of a.f & b.f; i.e.
+
+      % cat a.f b.f | frm2iep -plates eros.plt -outstats stats.ab.f -stat mu ...
+    
+    and if the following sequence of commands are run 
+
+      % cat a.f | frm2iep -outstats stats.a.f -stat mu ...
+      % cat b.f | frm2iep -instats stats.a.f -outstats stats.a.f.b.f ...
+
+      % cat b.f | frm2iep -outstats stats.b.f -stat emiss -nooutiep ...
+      % cat a.f | frm2iep -instats stats.b.f -outstats stats.b.f.a.f ...
+
+    then the files stats.a.f.b.f & stats.b.f.a.f will be identical.
+
+
+
+********************************************************************************
+C) GENERATE PLATE MODEL FILES
+
+
+C1) Generate a new plate model from eros.plt file and frames files a.f & b.f 
+    with each output plate's map datum being the lowest emission angle 
+    (-min -stat emiss) for that plate of all the frames where that plate 
+    was lit and in the fov.  The plate model is output to standard output 
+    i.e. stdout; the option "-outiep ab.iep" sends the IEP output to file 
+    ab.iep and keeps the IEP output from being sent to the plate model file 
+    via stdout.
+
+  % cat a.f b.f | frm2iep -plates eros.plt -min -stat emiss \
+                          -nooutiep > eros.lowemiss.plt
+
+C2) Same as (C1) above but with output statistics file (-outstats stats.ab.f).
+    The selection criterion option -min was dropped because it will be 
+    overridden by the -outstats option. 
+
+  % cat a.f b.f | frm2iep -plates eros.plt -outstats stats.ab.f -stat emiss \
+                          -nooutiep > eros.lowemiss.plt
+
+C3) Use statistics file stats.ab.f from (C2) above to generate the plate model 
+    file eros.incid.lowemiss.plt that has as each plate's map datum the 
+    incidence angle from the frame that has that plate's lowest emission 
+    angle.
+
+  % frm2iep -plates eros.plt -instats stats.ab.f -plateoutstat incid \
+            -nooutiep > eros.incid.lowemiss.plt < /dev/null
+
+    ***N.B. The standard input must be null (< /dev/null) or else the 
+    program will wait for input from the keyboard.  If you forget to 
+    use /dev/null as stdin, simply press your EOF keystroke (typically 
+    Control-D).
+

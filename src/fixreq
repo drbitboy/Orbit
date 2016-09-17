@@ -1,0 +1,23 @@
+#!/bin/csh
+# fixreq - fix REQ file ($1) that was created before orbit SASF modifications
+#          made on or before date in variable "sfx"
+#        - leaves original in $1$sfx, sfx is set as new mods are made
+
+set sfx=.pre19990625
+
+\mv -f $1 $1$sfx
+
+sed  \
+  -e 's/TOPTOP/REQ/g' \
+  -e 's/TOP_SCHED/REQ_SCHED/' \
+  -e 's/TOP/CAS/g' \
+  -e 's/CAS # //' \
+  -e '/^MSISEQDEF/s/"MANUAL"/"MAN"/' \
+  -e '/^NIS[DS]*R/s/\\,\\\([0-9:]*\)\\,/\\,\1,/' \
+  -e '/^DS56,/s/[\\,][\\,]/,/g' \
+  -e '/^DS40,/s/[\\,][\\,]/,/g' \
+  -e '/^DS40FULL,/s/[\\,][\\,]/,/g' \
+  -e '/^DS56,[^,]*,[^"FT]/s/^DS56,[^,]*,/&FALSE,/' \
+  -e '/^DS56,[^,]*,"FALSE"/s/"FALSE"/FALSE/' \
+  -e '/^DS56,[^,]*,"TRUE"/s/"TRUE"/TRUE/' \
+  < $1$sfx >! $1

@@ -1,0 +1,50 @@
+CTOFORT=-DCTOFORT_f2c
+
+RM=/bin/rm -f
+
+LFC=gcc
+
+FDEBUG=
+CDEBUG = -DDEBUG
+#CDEBUG = -O
+
+XLIBS = -L/usr/lib/X11R4 -L/usr/lib/Motif1.1 -lXm -lXt -lX11
+
+CGENERAL = $(CDEBUG) $(CTOFORT) -I/usr/include/X11R4 -I/usr/include/Motif1.1
+
+HPCFLAGS = -Aa -Wp,-H12000 $(CTOFORT)
+
+SPICELIBS =  NEARTOP/naif/lib/support.a NEARTOP/naif/lib/spicelib.a
+FLIBS =  $(SPICELIBS) -L/usr/local/lib -lF77 -lI77 -lm
+
+LIBS = $(XLIBS) $(FLIBS) -lPW
+CFLAGS = $(HPCFLAGS) $(CGENERAL)
+
+OPT=
+
+FOPT=$(FDEBUG)
+#FOPT=$(FDEBUG) +O1
+
+GCC = gcc $(OPT)
+GCFLAGS = $(CGENERAL)
+
+CC = $(GCC)
+CFLAGS = $(GCFLAGS)
+
+#FFLAGS = +T -C -u +ppu $(FOPT) +U77 -w
+FFLAGS =
+
+all: orbit
+
+orbitspice.o: orbitspice.f
+	rm -f orbitspice_f2c.c
+	f2c < orbitspice.f > orbitspice_f2c.c
+	$(CC) $(CCFLAGS) -o orbitspice.o -c orbitspice_f2c.c
+	rm -f orbitspice_f2c.c
+
+
+%.o: %.f
+	f2c $^
+	$(CC) -c $(^:.f=.c)
+	/bin/rm -f $(^:.f=.c)
+

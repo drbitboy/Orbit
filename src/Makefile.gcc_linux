@@ -1,0 +1,43 @@
+RM=/bin/rm -f
+
+#CPP ok
+
+LFC=g77
+FC=$(LFC)
+
+#XMLIBDIR=/usr/lesstif/lib
+#LXMLIB=-L$(XMLIBDIR) -Xlinker -rpath -Xlinker $(XMLIBDIR)
+LXMLIB=
+
+XLIBS=$(LXMLIB) -L/usr/X11R6/lib -lXmu -lXm -lXt -lX11
+#FLIBS=NEARTOP/naif/lib/spicelib.a -lg2c -lm
+FLIBS=NEARTOP/naif/lib/spicelib.a -lf2c -lm
+
+LIBS=$(XLIBS) $(FLIBS)
+
+DBLIBS=-lgdbm
+DBINC=
+
+CDEBUG=-O
+CTOFORT=-DCTOFORT_g77
+
+#XMINCDIR=/usr/lesstif/include/Xm -I/usr/lesstif/include
+XMINCDIR=/usr/X11R6/include/Xm -I/usr/X11R6/include/X11 -I/usr/X11R6/include
+
+CGENERAL=$(CDEBUG) $(CTOFORT) -I/usr/include/X11 -I$(XMINCDIR)
+
+CFLAGS=$(CGENERAL) $(DBINC)
+
+FDEBUG=
+FOPT=$(FDEBUG)
+FFLAGS=$(FOPT)
+
+OPT=
+
+GCC=gcc $(OPT)
+
+CC=$(GCC)
+
+LD=gcc $(CFLAGS)
+
+all: orbit

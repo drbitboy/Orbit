@@ -1,0 +1,177 @@
+ frm2iep.c - input orbit .frames file, output photometric geometry for
+ each plate from a shape model
+
+ Usage:
+
+   frm2iep [options] [-intype <inputType> [inputTypeOptions]] [< xyz.frames]
+
+ Purpose:
+
+   Read "orbit" program frames file output (standard input or file), 
+   calculate photometric parameters for each plate in a shape model 
+   which is visible and in the field of view (FOV) for each frame 
+   (observation).   Two outputs are possible:
+   1)  flat file, one line per plate per frame with photometric parameters;
+   2)  plate model file, single statistic summarized for each plate.
+
+ Options:
+
+   -framesin <framesfn>  Input frames from file <framesfn> 
+                         (default:  standard input, "" => none)
+
+   -outiep <fn>          Output one line for each plate in a FOV to flat file
+   -outiep -             named <fn>; <fn> = '-' => standard output (default).
+   -nooutiep             - if -nooutiep is specified, do not write flat file
+                         ***N.B. Default output is standard output which may 
+                                 conflict with plate model statistics.
+
+   -spud <viewfn>        Use spud model from file <viewfn>
+                         ***N.B. -plates overrides -spud
+                         ***N.B. ignore plate model error messages
+
+   -plates <platefn>     Use plate model from file <platefn>
+
+   -instats <instatfn>   input plate model statistics file 
+                         from file <instatfn> - overrides statistics in
+                         any plate model 
+
+   -outstats <outstatfn> output updated plate model statistics 
+                         to file <outstatfn>
+
+   -biep <biepfn>        Output binary file containing 
+                         1) a single long integer giving the number of 
+                              plate/met combinations that follow
+                         2) for each plate in a given MET's FOV
+                              long    FOV kMET
+                              long    plate number
+                              double  incidence angle, degrees
+                              double  emission angle, degrees
+                              double  phase angle, degrees
+                              double  range TO PLATE, km
+
+   -iep -vine -xgrs      Output flat file format (default=iep).
+   -vmag -lcrv           -iep  => cpLLR i e alpha vertLL time
+                         -vine => cpLLR i e alpha iV nV eV time
+                         -xgrs => plate # cpLLR  i  e  alpha  time
+                         -vmag => plate_area  plate_range i e alpha \
+                                                           cpLL time plate#
+                         -lcrv => plate_area  plate_range i e alpha \
+                                            scLL solLL met time plate#
+
+                         Key:
+                           cpLLR = plate center lat, lon, radius, ABF
+                           cpLL = plate center lat, lon, ABF
+                           scLL/sunLL = spacecraft/sun lat, lon, ABF
+                           vertLL = plate vertices lats, lons, ABF
+                           i,e,alpha = incidence, emission, phase angles, deg
+                           iV,nV,eV = incid, norm, emiss vectors, ABF
+
+   -fov <fovType>        How to interpret whether a given plate is in the 
+                         FOV defined by p5Vec & campts (vertices) in .frames 
+                         file (default=winding).  Valid values for <fovType>:
+
+                         winding - project FOV vertices & plate center (cp) 
+                                   into common (image) plane.  If the cross 
+                                   products of adjacent cp-to-vertex vectors 
+                                   all go in the same direction, the plate
+                                   is in the FOV
+                                   ***N.B. ASSUMES FOV SHAPE IS CONVEX
+                         w2 - another form of winding:  if the cp is on the 
+                              same side of all planes formed by two adjacent 
+                              FOV vectors as the next FOV vectors, the
+                              plate is in the FOV
+                              ***N.B. ASSUMES FOV SHAPE IS CONVEX
+                         cart4 - project FOV vertices & plate center (cp)
+                                 into common image plane, assume first 3
+                                 vertices are at (X,Y) = (1,0),(0,0),(0,1)
+                                 in a 2D cartesian coord system, convert cp 
+                                 to (X,Y)  If 0 < X < 1 && 0 < Y < 1, the
+                                 plate is in the FOV
+                         xgrs - If plate center is within 2.5 degrees of p5
+                                vector (boresight), the plate is in the FOV
+
+   -stat <statistic>     Summarize <statistic> for each plate,
+                         output new plate model with stats to standard output.
+                         Plates not in any FOV will be given
+                         a Null value.  Valid values for <statistic>:
+                                     
+                         FRMSTAT=    Description [Range]
+
+                         incid       incidence angle, degrees [0-90]
+                         mu0         cos(incid) [0-1]
+                         emiss       emission ange, degrees [0-90]
+                         mu          cos(emiss) [0-1]
+                         mu0mu       (mu0 x mu) [0-1]
+                         phase       phase angle, degrees [0-180]
+                         cosphase    cos(phase)+1  [0-2]
+                         resolution  mu / (Pixel_size x Range), pxl/km [0-*]
+                         coverage    # FOV containing this plate [1-*]
+
+                         MARK ROBINSON (MR) calcs:
+
+                         mrmorph     (PxlSize*Range)*(1/mu), m/pxl [0-*]
+                         mralbedo    (PxlSize*Range)*(1/mu+1/mu0), m/pxl [0-*]
+
+                         Nixel database:
+
+                         obs         observation parameter from frames file
+
+ ***N.B. -stat is overridden by -instats
+
+ ***N.B. Pixel_size used in resolution calculations is average NEAR MSI 
+         pixel dimension i.e. sqrt(161uRad/Pxl*95uRad/Pxl)
+
+   -max -sum -min  Selection criterion for per-plate statistics.  Has no 
+                   effect if -stat option is not specified.
+                   -max  save maximum value of statistic (e.g. incid)
+                   -min  save minimum value of statistic (e.g. phase)
+                   -sum  sum statistic (e.g. resolution, coverage, mu0mu)
+
+ ***N.B. -max, -min & sum are overridden if either -instats or -outstats 
+         are specified
+
+   -platesout <platesoutfn>  output plate model to file <platesoutfn>
+                             (default is standard output; "" => none)
+
+   -platesoutstat <statistic>  output this statistic to plate model instead of
+                               -stat <statistic>
+
+   -obsLowLim <value>  low limit of observational parameter - ignore values
+                       less than this (defaults to 0; normally used 
+                       for negative values; will be subtracted from 
+                       any observational parameter in frames file)
+
+   -init           initialize plate model per-plate statistics to -1.0 before
+                   reading frames file.  Has no effect if -stat option is
+                   not specified.
+
+   -rigor          make special checks to ensure no artifacts from orthogonal
+                   projection.  also, include any plate that is intersected 
+                   by any corner point
+
+   -verbose        output progress if orbdb is used
+
+**********************************************************************
+ ***N.B. THE FOLLOWING OPTION(S) MUST COME AFTER ALL OTHER OPTIONS 
+         LISTED ABOVE
+**********************************************************************
+
+   -intype <intype>  [intype options]
+
+                   type of input frames file & related options
+
+                   <intype>  
+
+                   string to indicate type of input file from which
+                   to get frames' info.  some possible entries are kMET,
+                   MET, ET, UTC, SCLK.  see file toiep.c for all possibilies. 
+                   or run "frm2iep -intype list[full]".
+                   defaults to original orbit frames file using 
+                   frm2iep_readnextOrig() function in this module.
+
+                   [intype options] 
+
+                   options relating to <intype>; will be 
+                   interpreted by the appropriate *2iep_init routine
+                   run "frm2iep -intype listfull" to see available options.
+

@@ -1,0 +1,24 @@
+#!/bin/csh
+
+unset echo
+
+if ( "$1" == "-shape" ) then
+  set CPPDEF='-D_ORBIT_WRL_SHAPE_="'"$2"'"'
+  shift; shift
+else
+  set CPPDEF='-U_ORBIT_WRL_SHAPE_='
+endif
+
+set dn=`dirname $0`
+
+if ( "$1" != "" ) then
+  set infile="$1"
+else
+  set infile="-"
+endif
+
+if ( $#argv > 1 ) then
+  _CPPCMD_ -P -I$dn "$CPPDEF" $infile | sed 's/^VRMLHDR$/#VRML V2.0 utf8/' >! $2
+else
+  _CPPCMD_ -P -I$dn "$CPPDEF" $infile | sed 's/^VRMLHDR$/#VRML V2.0 utf8/'
+endif

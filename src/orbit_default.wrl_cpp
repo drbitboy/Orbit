@@ -1,0 +1,8 @@
+VRMLHDR
+#ifndef _ORBIT_WRL_SHAPE_
+#define _ORBIT_WRL_SHAPE_ "03.wrl"
+#endif
+#include "orbit_wrl.h"
+Viewpoint { position 0 0 50 description "viewptDefault" }
+MSIFov( -11 0 0, 0 1 0 .2 , 1 400 400 , "99887766" , "#99887766")
+MSIFov(0 0 -31 , .2 1 0 -1.57 , 1 200 200 , "15Z RotY" , "#15Z RotY")
