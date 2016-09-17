@@ -8,6 +8,7 @@ int main( argc, argv) unsigned int argc; char **argv; {
 char *fnSpud = (argc > 1) ? argv[1] : (char *) 0;
 SPUDR spudr;
 SPUDF spudf;
+void spudprint_plate(SPUDF*);
 
   spudr.nlatR = SPUDRNLAT;
   spudr.nlonR = SPUDRNLON;

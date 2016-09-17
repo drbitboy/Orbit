@@ -11,6 +11,7 @@ VEC ABC, scalevec;
 double scale, minscale, maxscale;
 double *Rxyz;
 unsigned long iv, i;
+void spudprint_plate(SPUDF*);
 
   spudr.nlatR = SPUDRNLAT;
   spudr.nlonR = SPUDRNLON;

@@ -7,6 +7,7 @@
 int main( argc, argv) unsigned int argc; char **argv; {
 SPUDR		spudr;
 SPUDF		spudf;
+void            spudprint_oogl(SPUDF*);
 
   spudr.nlatR = SPUDRNLAT;
   spudr.nlonR = SPUDRNLON;
@@ -17,7 +18,7 @@ SPUDF		spudf;
   }
   if ( !spudr.eastlon) spudr.eastlon = -1;
 
-  printf( "#eastlon,nlat,nlon=%d %d %d\n", spudr.eastlon, spudr.nlatR
+  printf( "#eastlon,nlat,nlon=%d %lu %lu\n", spudr.eastlon, spudr.nlatR
 		, spudr.nlonR), fflush(stdout);
 
   rmod2face( &spudr, &spudf);

@@ -12,7 +12,7 @@ char *malloc();
 
 #include "debug.h"
 #include "spudshap.h"
-#include "orbit_spice_names.h"
+#include "SpiceUsr.h"
 
 #define nvert spudf->nv
 #define np spudf->nface
@@ -46,7 +46,7 @@ unsigned long i, iv0, iv1, iv2;
     v2 = spudf->Rxyz+(3*(iv2= spudf->oe[spudf->faceoeidx[i]+1]));
     VMINUS2( v1, v0, v01);
     VMINUS2( v2, v0, v02);
-    vcrss( v01, v02, vc);
+    vcrss_c( v01, v02, vc);
     if ( VDOT(vc,uvn) >= 0.0 ) {
       fprintf( stdout, "    %ld %ld %ld -1\n", iv0, iv1, iv2);
     } else {

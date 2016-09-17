@@ -8,6 +8,7 @@
 int main( argc, argv) unsigned int argc; char **argv; {
 SPUDR           spudr;
 SPUDF           spudf;
+void            spudprint_raysh(SPUDR*,SPUDF*);
 
   spudr.nlatR = SPUDRNLAT;
   spudr.nlonR = SPUDRNLON;

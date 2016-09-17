@@ -43,6 +43,8 @@ char *usageOpts[] = {
 , (char *) 0
 };
 
+void spudprint_plateBareToFile(SPUDF*, FILE*);
+
 #define ERRRTN(R) RTN(  usage(usageOpts);, R)
 
 #define RTN(U,R) { \
@@ -95,11 +97,11 @@ char *usageOpts[] = {
 
   if ( !(inpLmFile = inpLmPath ? fopen( inpLmPath, "r") : stdin) ) {
     fprintf( stderr, "Landmark input file fopen(`%s',`r') failed\n"
-                   , inpLmPath ? inpLmPath : "<stdin???>");
+                   , inpLmPath ? inpLmPath : "<stdin?>");
     ERRRTN(-7)
   }
 
-  fprintf( stderr, "nv nseg nface = %d %d %d\n"
+  fprintf( stderr, "nv nseg nface = %lu %lu %lu\n"
                  , nv=spudf->nv, spudf->nseg, nf=spudf->nface);
 
   if ( !doSave) {                                              /* init colors */
@@ -173,7 +175,7 @@ char *usageOpts[] = {
 
   if ( !(outPltFile = outPltPath ? fopen( outPltPath, "w") : stdout) ) {
     fprintf( stderr, "Plate model output file fopen(`%s',`w') failed\n"
-                   , outPltPath ? outPltPath : "<stdout???>");
+                   , outPltPath ? outPltPath : "<stdout?>");
     ERRRTN(-8)
   }
 

@@ -193,8 +193,8 @@ orbit_fov_test: orbit_fov.c $(ORBIT3DDUMMY)
 matriculator: matriculator.o $(ORBIT3DDUMMY)
 	$(CCFNOX) -o matriculator matriculator.o $(ORBIT3DDUMMY) $(FLIBS)
 
-spudlims: spudlims.o $(SPUDOBJS) $(ORBIT3DDUMMY)
-	$(CCFNOX) -o spudlims spudlims.o $(SPUDOBJS) $(ORBIT3DDUMMY) -lm
+spudlims: spudlims.o $(SPUDOBJS)
+	$(CCFNOX) -o spudlims spudlims.o $(SPUDOBJS) $(FLIBS)
 
 testspudf2: testspudf2.o spudf2.o $(SPUDOBJS) $(ORBIT3DDUMY)
 	$(CCF) -o testspudf2 testspudf2.o spudf2.o \
@@ -212,8 +212,8 @@ speedtest: speedtest.o $(SPUDOBJS) $(ORBIT3DDUMMY)
 speedtest2: speedtest2.o $(SPUDOBJS2) $(ORBIT3DDUMMY)
 	$(CCF) -o speedtest2 speedtest2.o $(SPUDOBJS2) $(ORBIT3DDUMMY) -lm
 
-spudtest: spudtest.o $(SPUDOBJS) $(ORBIT3DDUMMY)
-	$(CCFNOX) -o spudtest spudtest.o $(SPUDOBJS) $(ORBIT3DDUMMY) -lm
+spudtest: spudtest.o $(SPUDOBJS)
+	$(CCFNOX) -o spudtest spudtest.o $(SPUDOBJS) $(FLIBS)
 
 #met: met.o
 #	$(LFC) $(FFLAGS) -o met met.o $(FFLIBS)
@@ -227,88 +227,80 @@ cktimes: cktimes.o
 spud2: $(SPUD2EXES)
 
 platelandmarks: platelandmarks.o spudshap.o spudface.o spudprint.o \
-		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY)
-	$(CCF) -o platelandmarks platelandmarks.o \
+		spudplates.o spudview.o spudmisc.o
+	$(CCFNOX) -o platelandmarks platelandmarks.o \
 		spudshap.o spudface.o spudprint.o\
 		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
 
-spud2wrl: spud2wrl.o $(SPUDOBJS) $(ORBIT3DDUMMY)
-	$(CCFNOX) -o spud2wrl spud2wrl.o $(SPUDOBJS) $(ORBIT3DDUMMY) $(FLIBS)
+spud2wrl: spud2wrl.o $(SPUDOBJS)
+	$(CCFNOX) -o spud2wrl spud2wrl.o $(SPUDOBJS) $(FLIBS)
 
 spud2stl: spud2stl.o $(SPUDOBJS) spudprint.o
 	$(CCFNOX) -o spud2stl spud2stl.o $(SPUDOBJS) spudprint.o \
 		$(FLIBS)
 
 pltxlate: pltxlate.o spudshap.o spudface.o \
+		spudplates.o spudview.o spudmisc.o
+	$(CCFNOX) -o $@ pltxlate.o spudshap.o spudface.o \
 		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY)
-	$(CCF) -o $@ pltxlate.o spudshap.o spudface.o \
-		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
 ospudxlate: ospudxlate.o spudshap.o spudface.o \
+		spudplates.o spudview.o spudmisc.o
+	$(CCFNOX) -o $@ ospudxlate.o spudshap.o spudface.o \
 		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY)
-	$(CCF) -o $@ ospudxlate.o spudshap.o spudface.o \
-		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
 pltintersect: pltintersect.o spudshap.o spudface.o \
 		spudplates.o spudview.o spudmisc.o \
 		$(ORBIT3DDUMMY)
-	$(CCF) -o $@ pltintersect.o spudshap.o spudface.o \
+	$(CCFNOX) -o $@ pltintersect.o spudshap.o spudface.o \
 		spudplates.o spudview.o spudmisc.o \
 		$(ORBIT3DDUMMY) $(FLIBS)
 
 spud2plate: spud2plate.o spudshap.o spudface.o spudprint.o \
-		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY)
+		spudplates.o spudview.o spudmisc.o
 	$(CCFNOX) -o spud2plate spud2plate.o spudshap.o spudface.o spudprint.o \
 		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
 spud2topo: spud2topo.o spudshap.o spudface.o spudprint.o \
-		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY)
+		spudplates.o spudview.o spudmisc.o
 	$(CCFNOX) -o spud2topo spud2topo.o spudshap.o spudface.o spudprint.o \
 		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
 spudellfix2plate: spudellfix2plate.o \
 		spudshap.o spudface.o spudprint.o \
-		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY)
+		spudplates.o spudview.o spudmisc.o
 	$(CCFNOX) -o spudellfix2plate spudellfix2plate.o spudshap.o spudface.o \
 		spudprint.o \
 		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
-spud2xplate: spud2xplate.o $(SPUDOBJS) spudprint.o $(ORBIT3DDUMMY)
+spud2xplate: spud2xplate.o $(SPUDOBJS) spudprint.o
 	$(CCFNOX) -o spud2xplate spud2xplate.o $(SPUDOBJS) spudprint.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
 spud2oogl: spud2oogl.o spudshap.o spudface.o spudprint.o \
-		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY)
+		spudplates.o spudview.o spudmisc.o
 	$(CCFNOX) -o spud2oogl spud2oogl.o spudshap.o spudface.o spudprint.o \
 		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
 spud2raysh: spud2raysh.o spudshap.o spudface.o spudprint.o \
-		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY)
+		spudplates.o spudview.o spudmisc.o
 	$(CCFNOX) -o spud2raysh spud2raysh.o spudshap.o spudface.o spudprint.o \
 		spudplates.o spudview.o spudmisc.o \
-		$(ORBIT3DDUMMY) $(FLIBS)
+		$(FLIBS)
 
 s2umesh: s2umesh.o spudshap.o spudface.o
-	$(CCF) -o s2umesh s2umesh.o spudshap.o spudface.o -lm
+	$(CCFNOX) -o s2umesh s2umesh.o spudshap.o spudface.o -lm
 
 s2stoff: s2stoff.o spudshap.o spudface.o
-	$(CCF) -o s2stoff s2stoff.o spudshap.o spudface.o -lm
+	$(CCFNOX) -o s2stoff s2stoff.o spudshap.o spudface.o -lm
 
 testatt: testatt.o
 	$(LFC) $(FFLAGS) -o testatt testatt.o $(SPICELIBS) $(FFLIBS)

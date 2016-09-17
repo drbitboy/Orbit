@@ -39,6 +39,7 @@ double *pC;
 long *lclNFace;
 double lclRmodel[SPUDRNLON];
 double maxR;
+void spudprint_plate(SPUDF*);
 
   if ( argc < 5) {
     fprintf( stderr

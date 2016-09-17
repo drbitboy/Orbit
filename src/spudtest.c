@@ -11,7 +11,8 @@
 #endif
 /**/
 #include "debug.h"
-#include "orbit3d.h"
+/* #include "orbit3d.h" */
+#include "SpiceUsr.h"
 #include "spudshap.h"
 
 int main( argc, argv) unsigned int argc; char **argv; {
@@ -62,12 +63,12 @@ unsigned long bad=0;
   DPR(( stderr, "vertex = %9.2lf %9.2lf %9.2lf", vtx[0], vtx[1], vtx[2])); \
   DPR(( stderr, " ip=%5ld:  r = %9.2lf\n", ip, sqrt(r2) )); \
   /* test spudf_intersect() */ \
-  vmxpb( 10*rnd[I], vtx, sc, sc) /* put s/c at 10 radii out */
+  vlcom_c( 10*rnd[I], vtx, 1.0, sc, sc) /* put s/c at 10 radii out */
 
 #define CALC(S,I) \
   vtx = (spudf.Rxyz + (3*(S))); \
   /* test spudf_intersect() */ \
-  vmxpb( 10*rnd[I], vtx, sc, sc) /* put s/c at 10 radii out */
+  vlcom_c( 10*rnd[I], vtx, 1.0, sc, sc) /* put s/c at 10 radii out */
 
   mp = spudf.midpts;
   fa=spudf.faceapices;
